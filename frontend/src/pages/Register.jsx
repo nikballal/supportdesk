@@ -20,6 +20,14 @@ function Register() {
     }));
   };
 
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    if (password !== password2) {
+      toast.error("Passwords do not match");
+    }
+  };
+
   return (
     <>
       <section className="heading">
@@ -40,6 +48,7 @@ function Register() {
               name="name"
               onChange={onChange}
               placeholder="Enter your name"
+              required
             />
           </div>
           {/* email */}
@@ -52,6 +61,7 @@ function Register() {
               name="email"
               onChange={onChange}
               placeholder="Enter your email"
+              required
             />
           </div>
           {/* password */}
@@ -64,6 +74,7 @@ function Register() {
               name="password"
               onChange={onChange}
               placeholder="Enter your password"
+              required
             />
           </div>
           {/* confirm password */}
@@ -76,6 +87,7 @@ function Register() {
               name="password2"
               onChange={onChange}
               placeholder="Confirm your password"
+              required
             />
           </div>
 
