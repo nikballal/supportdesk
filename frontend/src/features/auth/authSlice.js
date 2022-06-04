@@ -8,6 +8,19 @@ const initialState = {
   message: "",
 };
 
+//getting values from the register form inputs fields
+export const register = createAsyncThunk(
+  "auth/register",
+  async (user, thunkAPI) => {
+    console.log(user);
+  }
+);
+
+//getting values from the login form inputs fields
+export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
+  console.log(user);
+});
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
