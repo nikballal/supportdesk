@@ -1,15 +1,21 @@
 const express = require("express");
 const router = express.Router();
+
 const {
   registerUser,
   loginUser,
   getMe,
 } = require("../controllers/userController");
 
-const { protect } = require("../middleware/authMiddleware"); //authmiddleware to protect the routes below (doesnt authorize the route without the bearer token)
+const { protect } = require("../middleware/authMiddleware");
 
+//Register route
 router.post("/", registerUser);
+
+//Login route
 router.post("/login", loginUser);
+
+//Get-me route
 router.get("/me", protect, getMe);
 
 module.exports = router;

@@ -1,8 +1,10 @@
-import { useState } from "react";
-import { toast } from "react-toastify";
+import { useState, useEffect } from "react";
 import { FaSignInAlt } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { login } from "../features/auth/authSlice";
+import { login, reset } from "../features/auth/authSlice";
+import Spinner from "../components/Spinner";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -10,20 +12,36 @@ function Login() {
     password: "",
   });
 
-  //destructure formdata
+  //destructure the form data
   const { email, password } = formData;
 
+  //initialize dispatch
   const dispatch = useDispatch();
 
-  //get all the state from authSlice
-  const { user, isLoading, isSuccess, message } = useSelector(
+  const navigate = useNavigate();
+
+  const { user, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.auth
   );
+
+  //takes effect as soon as the page is routed
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    //Redirect when logged in
+    if (isSuccess || user) {
+      navigate("/");
+    }
+
+    dispatch(reset());
+  }, [isError, isSuccess, user, message, dispatch, navigate]);
 
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value, //link state to the fields
     }));
   };
 
@@ -35,9 +53,13 @@ function Login() {
       password,
     };
 
-    //dispatch input field values by calling function from authSlice
     dispatch(login(userData));
   };
+
+  //Load up spinner
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <>
@@ -45,40 +67,38 @@ function Login() {
         <h1>
           <FaSignInAlt /> Login
         </h1>
-        <p>Please login to continue</p>
+        <p>Please login for support</p>
       </section>
 
+      {/* Login Form */}
       <section className="form">
         <form onSubmit={onSubmit}>
-          {/* email */}
           <div className="form-group">
             <input
               type="email"
               className="form-control"
               id="email"
-              value={email}
               name="email"
+              value={email}
               onChange={onChange}
               placeholder="Enter your email"
               required
             />
           </div>
-          {/* password */}
           <div className="form-group">
             <input
               type="password"
               className="form-control"
               id="password"
-              value={password}
               name="password"
+              value={password}
               onChange={onChange}
               placeholder="Enter your password"
               required
             />
           </div>
-
           <div className="form-group">
-            <button className="btn btn-block">Login</button>
+            <button className="btn btn-block">Submit</button>
           </div>
         </form>
       </section>

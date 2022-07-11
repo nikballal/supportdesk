@@ -6,17 +6,17 @@ function Home() {
     <>
       <section className="heading">
         <h1>What do you need help with?</h1>
-        <p>Please choose from option below</p>
+        <p>Please choose from an option below</p>
       </section>
 
-      {/* new ticket */}
       <Link to="/new-ticket" className="btn btn-reverse btn-block">
-        <FaQuestionCircle /> Create New Ticket
+        <FaQuestionCircle />
+        Create New Ticket
       </Link>
 
-      {/* existing tickets */}
       <Link to="/tickets" className="btn btn-block">
-        <FaTicketAlt /> View my tickets
+        <FaTicketAlt />
+        View My Tickets
       </Link>
     </>
   );

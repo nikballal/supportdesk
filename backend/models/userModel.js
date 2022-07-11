@@ -1,4 +1,4 @@
-//creating schema for user fields
+//building the data schema (structure) to send to database
 const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema(
@@ -23,8 +23,9 @@ const userSchema = mongoose.Schema(
     },
   },
   {
-    timestamps: true,
+    timestamps: true, //createdAt, updatedAt fields
   }
 );
 
+//export the model
 module.exports = mongoose.model("User", userSchema);

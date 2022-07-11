@@ -1,8 +1,8 @@
-//to protect the routes, such as '/me'
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 
+//to protect private routes
 const protect = asyncHandler(async (req, res, next) => {
   let token;
 
@@ -12,12 +12,11 @@ const protect = asyncHandler(async (req, res, next) => {
   ) {
     try {
       //Get token from header
-      token = req.headers.authorization.split(" ")[1]; //token is usually 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyOTcxZGU2NzhkYjQ5N2MyOGZlOThjOSIsImlhdCI6MTY1NDE0MzczOCwiZXhwIjoxNjU2NzM1NzM4fQ.D7IaMiPR3LUmNlrXWcv-PUEPDoDLobS8j6Q7auJZ4JI'
+      token = req.headers.authorization.split(" ")[1];
       //Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       //Get user from token
-      req.user = await User.findById(decoded.id).select("-password"); //setting 'user' to the id of the user found in the token
-
+      req.user = await User.findById(decoded.id).select("-password"); //decode id from token (refer to jwt.io to understand why), also ignore password
       next();
     } catch (error) {
       console.log(error);
@@ -32,6 +31,4 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = {
-  protect,
-};
+module.exports = { protect };

@@ -1,11 +1,13 @@
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
 const User = require("../models/userModel");
 
 //@desc     Register a new user
 //@route    /api/users
 //@access   Public
+
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -15,8 +17,8 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Please include all fields");
   }
 
-  //Find if user already exists
-  const userExists = await User.findOne({ email });
+  //Find if user already exists (check using email)
+  const userExists = await User.findOne({ email: email });
 
   if (userExists) {
     res.status(400);
@@ -24,8 +26,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   //Hash password
-  const salt = await bcrypt.genSalt(10);
-
+  const salt = await bcrypt.genSalt(10); //10 characters
   const hashedPassword = await bcrypt.hash(password, salt);
 
   //Create user
@@ -35,9 +36,10 @@ const registerUser = asyncHandler(async (req, res) => {
     password: hashedPassword,
   });
 
+  //check if user created
   if (user) {
     res.status(201).json({
-      _id: user._id,
+      _id: user._id, //following mongoDB convention, _id
       name: user.name,
       email: user.email,
       token: generateToken(user._id),
@@ -48,17 +50,19 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-//@desc     Login a user
+//@desc     Login user
 //@route    /api/users/login
 //@access   Public
+
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
   const user = await User.findOne({ email });
 
   //Check user and passwords match
   if (user && (await bcrypt.compare(password, user.password))) {
     res.status(200).json({
-      _id: user._id,
+      _id: user._id, //following mongoDB convention, _id
       name: user.name,
       email: user.email,
       token: generateToken(user._id),
@@ -72,7 +76,9 @@ const loginUser = asyncHandler(async (req, res) => {
 //@desc     Get current user
 //@route    /api/users/me
 //@access   Private
+
 const getMe = asyncHandler(async (req, res) => {
+  //to get only the data we want
   const user = {
     id: req.user._id,
     email: req.user.email,
@@ -84,7 +90,7 @@ const getMe = asyncHandler(async (req, res) => {
 //Generate token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "30d", //expires in 30 days
+    expiresIn: "30d",
   });
 };
 
